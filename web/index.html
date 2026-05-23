@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIPHER — AI Privacy & Data Agent</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--bg2:#0f0f18;--text:#e0e0e8;--muted:#8888aa;--accent1:#ff3366;--accent2:#6633ff;--accent3:#33ccff;--accent4:#33ff99;--accent5:#ffcc33}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+
+/* Geometric floating shapes */
+.geo-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.geo-shape{position:absolute;opacity:.12;animation:floatShape 20s ease-in-out infinite}
+.geo-triangle{width:0;height:0;border-left:40px solid transparent;border-right:40px solid transparent;border-bottom:70px solid var(--accent3)}
+.geo-hexagon{width:50px;height:29px;background:var(--accent2);position:relative;clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)}
+.geo-hexagon::before{content:'';position:absolute;width:100%;height:100%;background:inherit}
+.geo-circle{width:45px;height:45px;border-radius:50%;border:2px solid var(--accent1)}
+.geo-diamond{width:40px;height:40px;background:var(--accent4);transform:rotate(45deg)}
+
+@keyframes floatShape{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  25%{transform:translateY(-30px) rotate(90deg)}
+  50%{transform:translateY(15px) rotate(180deg)}
+  75%{transform:translateY(-20px) rotate(270deg)}
+}
+
+.geo-shape:nth-child(1){top:10%;left:5%;animation-delay:0s;animation-duration:25s}
+.geo-shape:nth-child(2){top:20%;right:10%;animation-delay:-3s;animation-duration:22s}
+.geo-shape:nth-child(3){top:50%;left:8%;animation-delay:-7s;animation-duration:28s}
+.geo-shape:nth-child(4){top:70%;right:15%;animation-delay:-5s;animation-duration:24s}
+.geo-shape:nth-child(5){top:85%;left:20%;animation-delay:-10s;animation-duration:30s}
+.geo-shape:nth-child(6){top:35%;right:5%;animation-delay:-2s;animation-duration:26s}
+.geo-shape:nth-child(7){top:60%;left:90%;animation-delay:-8s;animation-duration:23s}
+.geo-shape:nth-child(8){top:5%;left:50%;animation-delay:-12s;animation-duration:27s}
+.geo-shape:nth-child(9){top:45%;left:3%;animation-delay:-4s;animation-duration:21s}
+.geo-shape:nth-child(10){top:90%;right:30%;animation-delay:-6s;animation-duration:29s}
+
+/* Prism light rays */
+.prism-rays{position:fixed;top:-50%;left:50%;width:200%;height:200%;pointer-events:none;z-index:0;opacity:.06;background:conic-gradient(from 0deg at 50% 50%,transparent,rgba(255,51,102,.3),rgba(102,51,255,.3),rgba(51,204,255,.3),rgba(51,255,153,.3),rgba(255,204,51,.3),transparent,rgba(255,51,102,.3),transparent);animation:rotatePrism 30s linear infinite}
+@keyframes rotatePrism{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+
+/* Holographic shimmer */
+@keyframes holoShift{
+  0%{filter:hue-rotate(0deg)}
+  25%{filter:hue-rotate(90deg)}
+  50%{filter:hue-rotate(180deg)}
+  75%{filter:hue-rotate(270deg)}
+  100%{filter:hue-rotate(360deg)}
+}
+
+/* Navbar */
+nav{position:fixed;top:0;width:100%;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;z-index:100;background:rgba(10,10,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05)}
+nav .logo{font-size:1.5rem;font-weight:800;letter-spacing:3px;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:holoShift 8s linear infinite}
+nav .nav-links{display:flex;gap:2rem;list-style:none}
+nav .nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;transition:color .3s}
+nav .nav-links a:hover{color:var(--text)}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;z-index:1;padding:6rem 2rem 4rem}
+
+/* Animated Prism Diamond */
+.prism-container{position:relative;width:200px;height:200px;margin-bottom:3rem}
+.prism-diamond{width:160px;height:160px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);background:linear-gradient(135deg,rgba(255,51,102,.15),rgba(102,51,255,.15),rgba(51,204,255,.15),rgba(51,255,153,.15));border:2px solid rgba(255,255,255,.15);backdrop-filter:blur(10px);animation:prismPulse 4s ease-in-out infinite,holoShift 6s linear infinite}
+.prism-inner{width:100px;height:100px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(0deg);background:linear-gradient(225deg,rgba(51,204,255,.2),rgba(102,51,255,.2),rgba(255,51,102,.2));border:1px solid rgba(255,255,255,.2);animation:prismSpin 12s linear infinite reverse}
+.prism-core{width:50px;height:50px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);background:linear-gradient(135deg,var(--accent2),var(--accent3));animation:prismPulse 3s ease-in-out infinite alternate}
+.prism-glow{position:absolute;top:50%;left:50%;width:300px;height:300px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(102,51,255,.15),rgba(51,204,255,.08),transparent 70%);animation:prismPulse 5s ease-in-out infinite}
+
+@keyframes prismPulse{0%,100%{opacity:.8;transform:translate(-50%,-50%) rotate(45deg) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) rotate(45deg) scale(1.05)}}
+@keyframes prismSpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+
+.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;letter-spacing:4px;margin-bottom:1rem;background:linear-gradient(135deg,#fff,var(--accent3),var(--accent2),var(--accent1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:300% 300%;animation:gradientShift 6s ease infinite}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+.hero p{font-size:1.2rem;color:var(--muted);max-width:600px;margin-bottom:2.5rem}
+.hero .badge{display:inline-block;padding:.4rem 1rem;border-radius:20px;font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent3);border:1px solid rgba(51,204,255,.3);margin-bottom:1.5rem;backdrop-filter:blur(10px);background:rgba(51,204,255,.05)}
+
+.btn{display:inline-block;padding:.85rem 2.5rem;border-radius:8px;font-weight:600;text-decoration:none;transition:all .3s;font-size:1rem;cursor:pointer;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--accent2),var(--accent3));color:#fff;box-shadow:0 4px 25px rgba(102,51,255,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 35px rgba(102,51,255,.5)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.15);margin-left:1rem}
+.btn-ghost:hover{border-color:var(--accent3);background:rgba(51,204,255,.05)}
+
+/* Section */
+section{position:relative;z-index:1;padding:6rem 2rem}
+.container{max-width:1200px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:4rem}
+.section-header h2{font-size:2.5rem;font-weight:700;margin-bottom:.8rem;background:linear-gradient(135deg,#fff,var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section-header p{color:var(--muted);font-size:1.05rem;max-width:500px;margin:0 auto}
+
+/* Feature cards */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2rem}
+.feature-card{background:rgba(15,15,24,.7);border-radius:16px;padding:2.5rem;position:relative;overflow:hidden;transition:all .4s;backdrop-filter:blur(10px)}
+.feature-card::before{content:'';position:absolute;inset:0;border-radius:16px;padding:1px;background:linear-gradient(135deg,transparent 30%,rgba(102,51,255,.3),rgba(51,204,255,.3),transparent 70%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;transition:all .5s}
+.feature-card:hover{transform:translateY(-6px)}
+.feature-card:hover::before{background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3),var(--accent4),var(--accent5),var(--accent1));animation:borderRotate 3s linear infinite}
+@keyframes borderRotate{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+.feature-icon{width:56px;height:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.5rem;position:relative}
+.feature-icon.encryption{background:rgba(102,51,255,.15);color:var(--accent2)}
+.feature-icon.anonymize{background:rgba(51,204,255,.15);color:var(--accent3)}
+.feature-icon.vault{background:rgba(255,51,102,.15);color:var(--accent1)}
+.feature-icon.audit{background:rgba(51,255,153,.15);color:var(--accent4)}
+.feature-icon.gdpr{background:rgba(255,204,51,.15);color:var(--accent5)}
+.feature-icon.sharing{background:rgba(102,51,255,.15);color:var(--accent2)}
+.feature-card h3{font-size:1.25rem;font-weight:600;margin-bottom:.6rem;color:#fff}
+.feature-card p{color:var(--muted);font-size:.95rem;line-height:1.7}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2rem;text-align:center;padding:4rem 0}
+.stat-item{padding:2rem}
+.stat-number{font-size:3.5rem;font-weight:800;background:linear-gradient(135deg,var(--accent3),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.stat-label{color:var(--muted);font-size:.95rem;margin-top:.5rem;letter-spacing:1px}
+
+/* Code block */
+.code-section{background:rgba(15,15,24,.8);border-radius:16px;padding:2.5rem;margin-top:4rem;border:1px solid rgba(255,255,255,.06);backdrop-filter:blur(10px)}
+.code-block{background:rgba(10,10,15,.9);border-radius:10px;padding:1.5rem 2rem;font-family:'SF Mono','Fira Code',monospace;font-size:.85rem;color:var(--accent3);line-height:1.8;overflow-x:auto;position:relative}
+.code-block::before{content:'$ ';color:var(--muted)}
+.code-comment{color:var(--muted)}
+
+/* Footer */
+footer{position:relative;z-index:1;text-align:center;padding:3rem 2rem;border-top:1px solid rgba(255,255,255,.05);color:var(--muted);font-size:.85rem}
+footer .logo-sm{font-weight:700;letter-spacing:2px;background:linear-gradient(135deg,var(--accent1),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* Responsive */
+@media(max-width:768px){
+  nav .nav-links{display:none}
+  .hero h1{font-size:2.2rem}
+  .features-grid{grid-template-columns:1fr}
+  .btn-ghost{margin-left:0;margin-top:.8rem}
+  .hero .buttons{display:flex;flex-direction:column;align-items:center}
+  .prism-container{width:150px;height:150px}
+  .prism-diamond{width:120px;height:120px}
+  .prism-inner{width:70px;height:70px}
+  .prism-core{width:35px;height:35px}
+}
+</style>
+</head>
+<body>
+
+<!-- Geometric Background -->
+<div class="geo-canvas">
+  <div class="geo-shape geo-triangle" style="top:10%;left:5%"></div>
+  <div class="geo-shape geo-hexagon" style="top:20%;right:10%"></div>
+  <div class="geo-shape geo-circle" style="top:50%;left:8%"></div>
+  <div class="geo-shape geo-diamond" style="top:70%;right:15%"></div>
+  <div class="geo-shape geo-triangle" style="top:85%;left:20%;animation-delay:-10s"></div>
+  <div class="geo-shape geo-hexagon" style="top:35%;right:5%;animation-delay:-2s"></div>
+  <div class="geo-shape geo-circle" style="top:60%;left:90%;animation-delay:-8s"></div>
+  <div class="geo-shape geo-diamond" style="top:5%;left:50%;animation-delay:-12s"></div>
+  <div class="geo-shape geo-triangle" style="top:45%;left:3%;animation-delay:-4s"></div>
+  <div class="geo-shape geo-hexagon" style="top:90%;right:30%;animation-delay:-6s"></div>
+</div>
+<div class="prism-rays"></div>
+
+<!-- Navbar -->
+<nav>
+  <div class="logo">◆ CIPHER</div>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#stats">Security</a></li>
+    <li><a href="#quickstart">Quick Start</a></li>
+    <li><a href="https://github.com/galinaplinoel-stack/cipher" target="_blank">GitHub</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="prism-container">
+    <div class="prism-glow"></div>
+    <div class="prism-diamond"></div>
+    <div class="prism-inner"></div>
+    <div class="prism-core"></div>
+  </div>
+  <span class="badge">AI Privacy Agent</span>
+  <h1>CIPHER</h1>
+  <p>Intelligent data protection through encryption, anonymization, and secret management. Your privacy, automated.</p>
+  <div class="buttons">
+    <a href="#quickstart" class="btn btn-primary">Get Started</a>
+    <a href="https://github.com/galinaplinoel-stack/cipher" class="btn btn-ghost" target="_blank">View on GitHub</a>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Privacy Features</h2>
+      <p>Comprehensive data protection powered by intelligent automation</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon encryption">🔐</div>
+        <h3>Data Encryption</h3>
+        <p>AES-256-GCM authenticated encryption with associated data. Protect sensitive information at rest and in transit with military-grade cryptography.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon anonymize">🕵️</div>
+        <h3>PII Anonymization</h3>
+        <p>Automatic detection and anonymization of emails, phone numbers, SSNs, credit cards, and more. Choose mask, hash, or replace strategies.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon vault">🗄️</div>
+        <h3>Secret Vault</h3>
+        <p>Encrypted storage for API keys, credentials, and sensitive data. Supports key rotation, tagging, and secure retrieval.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon audit">📋</div>
+        <h3>Audit Logs</h3>
+        <p>Complete audit trail of every encrypt, decrypt, anonymize, and vault operation. Query, filter, and export your security history.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon gdpr">📜</div>
+        <h3>GDPR Compliance</h3>
+        <p>Built-in PII detection helps meet GDPR, CCPA, and other privacy regulation requirements. Scan and redact personal data automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon sharing">🔗</div>
+        <h3>Secure Sharing</h3>
+        <p>Share encrypted data with full audit trails. Every access is logged, ensuring accountability and traceability for all shared information.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section id="stats">
+  <div class="container">
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number">AES-256</div>
+        <div class="stat-label">Encryption Standard</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">PII Detection</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">Zero</div>
+        <div class="stat-label">Data Leaks</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Start -->
+<section id="quickstart">
+  <div class="container">
+    <div class="section-header">
+      <h2>Quick Start</h2>
+      <p>Get CIPHER running in seconds</p>
+    </div>
+    <div class="code-section">
+      <div class="code-block"><span class="code-comment"># Install CIPHER</span>
+pip install -r requirements.txt
+
+<span class="code-comment"># Protect sensitive data</span>
+python cli.py protect "Contact john@example.com or 555-123-4567"
+
+<span class="code-comment"># Scan for PII</span>
+python cli.py scan "SSN: 123-45-6789"
+
+<span class="code-comment"># Store secrets</span>
+python cli.py vault store api_key "sk-abc123xyz"
+
+<span class="code-comment"># View audit log</span>
+python cli.py audit</div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p><span class="logo-sm">◆ CIPHER</span> — AI Privacy & Data Agent</p>
+  <p style="margin-top:.5rem">Protecting data through intelligent automation</p>
+</footer>
+
+</body>
+</html>
